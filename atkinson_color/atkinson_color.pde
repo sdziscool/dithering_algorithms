@@ -4,12 +4,15 @@ PImage src;
 PImage res;
 
 
-int coloram = 4; //IMPORTANT Amount of colors you want in your result
+int coloram = 24; //IMPORTANT Amount of colors you want in your result
+color[] palette; //main palette, could later be implemented to be user defined
 color[] altpal = new color[coloram]; //array containg all random colors
 int palsw = 0; //paletteswitch, 0 is random, 1 is random+black, 2 is 3bit and anything else is b&w monochrome
+int loops = 12; //amount of loops for randomcolor.
+String image = "woot.jpg"; //path to image
 
 void setup() {
-  src = loadImage("woot3.jpg"); //image
+  src = loadImage(image); 
   res = createImage(src.width, src.height, RGB);
   size(src.width, src.height, JAVA2D);
 
@@ -19,6 +22,8 @@ void setup() {
 }
 
 void draw() {
+  for(int i = 0; i<loops; i++){
+  
   // Init canvas
   background(0,0,0);
   
@@ -59,9 +64,10 @@ void draw() {
     }
   }
   
-  save(palsw + "_" + hour() + second() + millis()*100 + "result.png");
+  save(palsw + "_" + hour() + second() + millis()*100 + "_" + i + "result.png");
+  src = loadImage(image);
+  }
   exit();
-  
 }
 
 // Find closest colors in palette
@@ -82,7 +88,6 @@ color findClosestColor(color in) {
   
   color[] monopal = {color(0), color(255)}; //monochrom palette black and white
   
-  color[] palette; //main palette
   
   if(palsw == 0 || palsw == 1){
   palette = altpal;
