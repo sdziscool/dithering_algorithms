@@ -14,6 +14,6 @@ TODO:
 
 make monochrome versions redundant and create a switch in colored versions to choose the palette (3bit, monochrome and random)
 
-_Fork author: sdziscool
+Fork author: sdziscool
 
-_Original author: [@danielepiccone](https://twitter.com/danielepiccone)
+Original author: [@danielepiccone](https://twitter.com/danielepiccone)
