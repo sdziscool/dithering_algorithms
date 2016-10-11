@@ -4,12 +4,12 @@ PImage src;
 PImage res;
 
 
-int coloram = 16; //IMPORTANT Amount of colors you want in your result
-color[] altpal = new color[coloram];
-boolean bsw = true; //blackswitch, true adds black to the otherwise random palette
+int coloram = 4; //IMPORTANT Amount of colors you want in your result
+color[] altpal = new color[coloram]; //array containg all random colors
+int palsw = 0; //paletteswitch, 0 is random, 1 is random+black, 2 is 3bit and anything else is b&w monochrome
 
 void setup() {
-  src = loadImage("woot.jpg");
+  src = loadImage("woot3.jpg"); //image
   res = createImage(src.width, src.height, RGB);
   size(src.width, src.height, JAVA2D);
 
@@ -59,7 +59,7 @@ void draw() {
     }
   }
   
-  save(hour() + second() + millis()*100 + "result.png");
+  save(palsw + "_" + hour() + second() + millis()*100 + "result.png");
   exit();
   
 }
@@ -68,7 +68,7 @@ void draw() {
 color findClosestColor(color in) {
 
   //Palette colors
-  color[] palette2 = {
+  color[] pal3bit = { // 3bit color palette
     color(0), 
     color(255), 
     color(255, 0, 0), 
@@ -79,9 +79,20 @@ color findClosestColor(color in) {
     color(255, 0, 255), 
     color(0, 255, 255),
   };
-
-  color[] palette = altpal;
-
+  
+  color[] monopal = {color(0), color(255)}; //monochrom palette black and white
+  
+  color[] palette; //main palette
+  
+  if(palsw == 0 || palsw == 1){
+  palette = altpal;
+  } else if(palsw == 2){
+    palette = pal3bit;
+  } else { palette = monopal;
+  }
+  
+  
+  
   PVector[] vpalette = new PVector[palette.length];  
   PVector vcolor = new PVector( (in >> 16 & 0xFF), (in >> 8 & 0xFF), (in & 0xFF));
   int current = 0;
@@ -101,10 +112,10 @@ color findClosestColor(color in) {
   return palette[current];
 }
 
-void collorcollector() {
+void collorcollector() { //extracts colors from original image at random, only takes new colors
   
   int i = 0;
-  if (bsw = true){
+  if (palsw == 1){
     altpal[0] = color(0);
     i++;
   }
