@@ -1,3 +1,4 @@
+import java.util.*;
 PImage src;
 PImage res;
 
@@ -22,14 +23,18 @@ int[][] matrix = {
 
 
 
-float mratio = 1.0 / 17;
-float mfactor = 255.0 / 5;
+float mratio = 10 / 18.5; //okay as is 1.0 / 18.5
+float mfactor = 255.0 / 50; //okay as is 255.0 / 5
+int coloram = 64; //IMPORTANT Amount of colors you want in your result
+color[] altpal = new color[coloram];
+int s = 1; //steps
+float scale = 1;
 
 void setup() {
-  src = loadImage("sky.jpg");
+  src = loadImage("wooto_vectorized.png");  
   res = createImage(src.width, src.height, RGB);
+  src.resize((int)(scale*src.width), (int)(scale*src.height));
   size(src.width, src.height, JAVA2D);
-
   noLoop();
   noStroke();
   noSmooth();
@@ -38,9 +43,15 @@ void setup() {
 void draw() {
   // Init canvas
   background(0, 0, 0);
+  
+  image(src, 0, 0);
+  
   // Define step
-  int s = 1;
 
+  collorcollector();
+  
+  background(0, 0, 0);
+  
   // Scan image
   for (int x = 0; x < src.width; x+=s) {
     for (int y = 0; y < src.height; y+=s) {
@@ -55,13 +66,17 @@ void draw() {
       line(x,y,x+s,y+s);
     }
   }
+  
+  save(hour() + second() + millis()*100 + "result.png");
+  exit();
+  
 }
 
 // Find closest colors in palette
 color findClosestColor(color in) {
   
   //Palette colors
- color[] palette = {
+ color[] palette2 = {
     color(0), 
     color(255), 
     color(255, 0, 0), 
@@ -72,6 +87,8 @@ color findClosestColor(color in) {
     color(255, 0, 255), 
     color(0, 255, 255),
   };
+  
+  color[] palette = altpal;
   
   
   PVector[] vpalette = new PVector[palette.length];  
@@ -92,5 +109,33 @@ color findClosestColor(color in) {
     }
   }
   return palette[current];
+}
+
+
+
+void collorcollector() {
+  int rx;
+  int ry;
+  int i = 0;
+    rx = int(random(src.width));
+    ry = int(random(src.height));
+  for (int x = rx; x < src.width; x++) {
+    for (int y = ry; y < src.height; y++) {
+      //i < altpal.length
+        if( !Arrays.asList(altpal).contains(color(get(x,y)))){
+
+          if(i == altpal.length){
+            break;
+          }
+          
+          altpal[i]=color(get(x,y));
+          i++;
+          
+          x = int(random(src.width));
+          y = int(random(src.height));
+          //System.out.println("flag1 " + altpal[i-1] + i + color(get(x,y)));
+        }
+      }
+    }
 }
 

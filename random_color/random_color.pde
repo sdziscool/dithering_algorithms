@@ -1,11 +1,15 @@
 import processing.pdf.*;
+import java.util.*;
 
 PImage src;
 PImage res;
 
 
+int coloram = 12; //IMPORTANT Amount of colors you want in your result
+color[] altpal = new color[coloram];
+
 void setup() {
-  src = loadImage("medusa.jpg");
+  src = loadImage("medusb.jpg");
   res = createImage(src.width, src.height, RGB);
   size(src.width, src.height, JAVA2D);
 
@@ -18,6 +22,11 @@ void setup() {
 
 void draw() {
   background(255,0,0);
+  
+  image(src, 0, 0);
+  
+  collorcollector();
+  
   int s = 1;
   for (int x = 0; x < src.width; x+=s) {
     for (int y = 0; y < src.height; y+=s) {
@@ -30,6 +39,10 @@ void draw() {
     }
   }
   
+  
+  save(hour() + second() + millis()*100 + "result.png");
+  exit();
+  
 }
 
 
@@ -37,7 +50,7 @@ void draw() {
 color findClosestColor(color in) {
 
   //Palette colors
-  color[] palette = {
+  color[] palette2 = {
     color(0), 
     color(255), 
     color(255, 0, 0), 
@@ -48,7 +61,7 @@ color findClosestColor(color in) {
     color(255, 0, 255), 
     color(0, 255, 255),
   };
-
+  color[] palette = altpal;
 
   PVector[] vpalette = new PVector[palette.length];  
   PVector vcolor = new PVector( (in >> 16 & 0xFF), (in >> 8 & 0xFF), (in & 0xFF));
@@ -68,5 +81,32 @@ color findClosestColor(color in) {
     }
   }
   return palette[current];
+}
+
+
+void collorcollector() {
+  int rx;
+  int ry;
+  int i = 0;
+    rx = int(random(src.width));
+    ry = int(random(src.height));
+  for (int x = rx; x < src.width; x++) {
+    for (int y = ry; y < src.height; y++) {
+      //i < altpal.length
+        if( !Arrays.asList(altpal).contains(color(get(x,y)))){
+
+          if(i == altpal.length){
+            break;
+          }
+          
+          altpal[i]=color(get(x,y));
+          i++;
+          
+          x = int(random(src.width));
+          y = int(random(src.height));
+          System.out.println("flag1 " + altpal[i-1] + i + color(get(x,y)));
+        }
+      }
+    }
 }
 

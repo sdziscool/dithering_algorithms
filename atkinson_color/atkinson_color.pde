@@ -1,8 +1,15 @@
+import java.util.*;
+
 PImage src;
 PImage res;
 
+
+int coloram = 16; //IMPORTANT Amount of colors you want in your result
+color[] altpal = new color[coloram];
+boolean bsw = true; //blackswitch, true adds black to the otherwise random palette
+
 void setup() {
-  src = loadImage("medusa.jpg");
+  src = loadImage("woot.jpg");
   res = createImage(src.width, src.height, RGB);
   size(src.width, src.height, JAVA2D);
 
@@ -14,6 +21,11 @@ void setup() {
 void draw() {
   // Init canvas
   background(0,0,0);
+  
+  image(src, 0, 0);
+  
+  collorcollector();
+  
   // Define step
   int s = 1;
   
@@ -47,13 +59,16 @@ void draw() {
     }
   }
   
+  save(hour() + second() + millis()*100 + "result.png");
+  exit();
+  
 }
 
 // Find closest colors in palette
 color findClosestColor(color in) {
 
   //Palette colors
-  color[] palette = {
+  color[] palette2 = {
     color(0), 
     color(255), 
     color(255, 0, 0), 
@@ -64,6 +79,8 @@ color findClosestColor(color in) {
     color(255, 0, 255), 
     color(0, 255, 255),
   };
+
+  color[] palette = altpal;
 
   PVector[] vpalette = new PVector[palette.length];  
   PVector vcolor = new PVector( (in >> 16 & 0xFF), (in >> 8 & 0xFF), (in & 0xFF));
@@ -84,4 +101,35 @@ color findClosestColor(color in) {
   return palette[current];
 }
 
+void collorcollector() {
+  
+  int i = 0;
+  if (bsw = true){
+    altpal[0] = color(0);
+    i++;
+  }
+  int rx;
+  int ry;
+  
+    rx = int(random(src.width));
+    ry = int(random(src.height));
+  for (int x = rx; x < src.width; x++) {
+    for (int y = ry; y < src.height; y++) {
+      //i < altpal.length
+        if( !Arrays.asList(altpal).contains(color(get(x,y)))){
+
+          if(i == altpal.length){
+            break;
+          }
+          
+          altpal[i]=color(get(x,y));
+          i++;
+          
+          x = int(random(src.width));
+          y = int(random(src.height));
+          //System.out.println("flag1 " + altpal[i-1] + i + color(get(x,y)));
+        }
+      }
+    }
+}
 
