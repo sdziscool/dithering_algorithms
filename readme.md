@@ -1,12 +1,19 @@
-## Dithering algorithms
-Simple Processing implementations of some dithering algorithms
+## Dithering algorithms++
+Somewhat less simple Processing implementations of some dithering algorithms
 	
 * Ordered dither
 * Floyd-Steinberg
 * Atkinson
 * Random
 
-Monochrome and 3bit RGB version
+Now contains: monochrome and color version with random or 3bit color palette
+Most updating will happen in the color versions seeing as they can also act as monochrome
 
-_Author [@danielepiccone](https://twitter.com/danielepiccone) - built with Processing 2.0b8_
 
+TODO:
+
+make monochrome versions redundant and create a switch in colored versions to choose the palette (3bit, monochrome and random)
+
+_Fork author: sdziscool
+
+_Original author: [@danielepiccone](https://twitter.com/danielepiccone)
