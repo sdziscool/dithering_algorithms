@@ -2,7 +2,7 @@ import java.util.*;
 PImage src;
 PImage res;
 int[][] matrix;
-
+float scale;
 
 // Bayer matrix 8x8
 int[][] matrix3x3 = {
@@ -80,18 +80,19 @@ int[][] matrix8x8 = {
 
 float mratio = 10 / 18.5; //okay as is 1.0 / 18.5
 float mfactor = 255.0 / 50; //okay as is 255.0 / 5
-int coloram = 4; //IMPORTANT Amount of colors you want in your result
-int palsw = 0; //paletteswitch, 0 is random, 1 is random+black, 2 is 3bit and anything else is b&w monochrome
-int loops = 4; //amount of loops for randomcolor.
-String image = "header.png"; //path to image
-float scale = 0.5; //scaling of image before processing, can be done without artefacting when using dithering
+int coloram = 40; //IMPORTANT Amount of colors you want in your result
+int palsw = 1; //paletteswitch, 0 is random, 1 is random+black, 2 is 3bit and anything else is b&w monochrome
+int loops = 2; //amount of loops for randomcolor.
+String image = "best girl.jpg"; //path to image
+float endscale = 2; //scaling of image before processing, can be done without artefacting when using dithering
 int s = 1; // steps, best left at 1
 int msize = 4; //2,3,4,8 also defines matrix!, anything other than 2,3,4 and 8 results in msize = 4 
 color[] palette; //main palette, could later be implemented to be user defined
 color[] altpal = new color[coloram]; //array containg all random colors
-float endscale = 1; //not working correctly, scaling of image after processing
+int scalar = 2; //now working correctly, non aliased scaling, 3 results in pics with "square" of 3 pixels wide
 
 void setup() {
+  scale =  1/(float)(scalar);
   src = loadImage(image);  
   res = createImage(src.width, src.height, RGB);
   src.resize((int)(scale*src.width), (int)(scale*src.height));
@@ -141,17 +142,17 @@ void draw() {
         line(x, y, x+s, y+s);
       }
     }
-    
-    res = src;
-    
-    
-    //frame.resize((int)(endscale*src.width), (int)(endscale*src.height));
-    size((int)(endscale*src.width), (int)(endscale*src.height));
-    noSmooth();
-    noStroke();
-    res.resize((int)(endscale*src.width), (int)(endscale*src.height));
-    noSmooth();
-    noStroke();
+
+
+
+
+
+    res = qs(scalar, src);
+
+    if (!(endscale == 1)) {
+      res = qs(endscale, res);
+    }
+
     image(res, 0, 0);
     save(palsw + "_" + hour() + second() + millis()*100 + "_" + i + "result.png");
 
@@ -240,9 +241,22 @@ void collorcollector() { //extracts colors from original image at random, only t
 
         x = int(random(src.width));
         y = int(random(src.height));
-        //System.out.println("flag1 " + altpal[i-1] + i + color(get(x,y)));
       }
     }
   }
+}
+PImage qs(float scalor, PImage orig) { //QuanteSize, non smooth image resizeing
+  size((int)(scalor*orig.width), (int)(scalor*orig.height));
+  PImage result = new PImage((int)(scalor*orig.width), (int)(scalor*orig.height));
+  for (int x = 0; x < orig.width; x++) {
+    for (int y = 0; y < orig.height; y++) {
+      for (int a = 0; a<scalor; a++) {
+        for (int b = 0; b<scalor; b++) {
+          result.set((int)(scalor*x+a), (int)(scalor*y+b), orig.get(x, y));
+        }
+      }
+    }
+  }
+  return result;
 }
 
